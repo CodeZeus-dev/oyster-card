@@ -25,4 +25,14 @@ describe Oystercard do
       expect { subject.top_up(1) }.to raise_error(Exception, "Top-up failed - Balance exceeding £90")
     end
   end
+
+  describe "#deduct" do
+    it "can be called on an Oystercard instance" do
+      expect(subject).to respond_to(:deduct).with(1).argument
+    end
+
+    it "deducts a fare from an Oystercard instance" do
+      expect { subject.deduct(1) }.to change { subject.balance }.by(-1)
+    end
+  end
 end
