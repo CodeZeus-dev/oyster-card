@@ -56,4 +56,16 @@ describe Oystercard do
       expect(subject.in_journey?).to eq(true)
     end
   end
+
+  describe "#touch_out" do
+    it "can be called on an Oystercard instance" do
+      expect(subject).to respond_to(:touch_out)
+    end
+
+    it "changes the in_journey instance variable to false" do
+      subject.touch_in
+      subject.touch_out
+      expect(subject.in_journey?).to eq(false)
+    end
+  end
 end
