@@ -35,4 +35,25 @@ describe Oystercard do
       expect { subject.deduct(1) }.to change { subject.balance }.by(-1)
     end
   end
+
+  describe "#in_journey?" do
+    it "can be called on an Oystercard instance" do
+      expect(subject).to respond_to(:in_journey?)
+    end
+
+    it "returns a boolean depending on whether the user is in journey or not" do
+      expect(subject.in_journey?).to eq(false).or eq(true)
+    end
+  end
+
+  describe "#touch_in" do
+    it "can be called on an Oystercard instance" do
+      expect(subject).to respond_to(:touch_in)
+    end
+
+    it "changes the in_journey instance variable to true" do
+      subject.touch_in
+      expect(subject.in_journey?).to eq(true)
+    end
+  end
 end
