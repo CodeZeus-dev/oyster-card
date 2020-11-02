@@ -10,7 +10,7 @@ class Oystercard
   end
 
   def top_up(value)
-    raise Exception.new "Top-up failed - Balance exceeding £90" if exceeds_limit
+    raise Exception.new "Top-up failed - Balance exceeding £90" if exceeds_limit?
 
     @balance += value
   end
@@ -21,7 +21,7 @@ class Oystercard
 
   private
 
-  def exceeds_limit
+  def exceeds_limit?
     @balance >= MAX_BALANCE
   end
 
