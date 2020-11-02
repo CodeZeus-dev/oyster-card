@@ -17,10 +17,6 @@ class Oystercard
     @balance += value
   end
 
-  def deduct(value)
-    @balance -= value
-  end
-
   def in_journey?
     @in_journey
   end
@@ -32,7 +28,7 @@ class Oystercard
 
   def touch_out
     @in_journey = false
-    @balance -= MINIMUM_FARE
+    deduct
   end
 
   private
@@ -43,6 +39,10 @@ class Oystercard
 
   def insufficient_funds?
     @balance < MINIMUM_FARE
+  end
+
+  def deduct
+    @balance -= MINIMUM_FARE
   end
 
 end

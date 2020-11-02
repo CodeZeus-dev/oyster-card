@@ -27,12 +27,9 @@ describe Oystercard do
   end
 
   describe "#deduct" do
-    it "can be called on an Oystercard instance" do
-      expect(subject).to respond_to(:deduct).with(1).argument
-    end
-
     it "deducts a fare from an Oystercard instance" do
-      expect { subject.deduct(1) }.to change { subject.balance }.by(-1)
+      subject.top_up(5)
+      expect(subject.send(:deduct)).to eq(4)
     end
   end
 
