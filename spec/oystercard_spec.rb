@@ -73,5 +73,11 @@ describe Oystercard do
       subject.touch_out
       expect(subject.in_journey?).to eq(false)
     end
+
+    it "charges the Oystercard the minimum fare" do
+      subject.top_up(25)
+      subject.touch_in
+      expect { subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MINIMUM_FARE)
+    end
   end
 end
