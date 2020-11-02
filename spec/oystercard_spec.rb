@@ -19,5 +19,10 @@ describe Oystercard do
     it "adds funds to the card's balance" do
       expect { subject.top_up(1) }.to change { subject.balance }.from(0).to(1)
     end
+
+    it "raises an Exception when balance exceeds the limit value" do
+      subject.top_up(Oystercard::MAX_BALANCE)
+      expect { subject.top_up(1) }.to raise_error(Exception, "Top-up failed - Balance exceeding £90")
+    end
   end
 end
