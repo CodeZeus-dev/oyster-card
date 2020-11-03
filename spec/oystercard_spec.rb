@@ -26,13 +26,6 @@ describe Oystercard do
     end
   end
 
-  describe "#deduct" do
-    it "deducts a fare from an Oystercard instance" do
-      subject.top_up(5)
-      expect(subject.send(:deduct)).to eq(4)
-    end
-  end
-
   describe "#in_journey?" do
     it "can be called on an Oystercard instance" do
       expect(subject).to respond_to(:in_journey?)
@@ -75,6 +68,10 @@ describe Oystercard do
       subject.top_up(25)
       subject.touch_in
       expect { subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MINIMUM_FARE)
+    end
+
+    it "raises an Exception if user hasn't touched in and tries to touch out" do
+      expect { subject.touch_out }.to raise_error(Exception, "You need to touch in first!")
     end
   end
 end

@@ -27,6 +27,7 @@ class Oystercard
   end
 
   def touch_out
+    raise Exception.new "You need to touch in first!" if @in_journey == false
     @in_journey = false
     deduct
   end
