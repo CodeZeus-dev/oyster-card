@@ -1,6 +1,16 @@
 require 'oystercard'
+require 'station'
 
 describe Oystercard do
+
+  let(:entry_station) { double :station }
+
+  it 'stores the entry station into the entry_station instance variable' do
+    subject.top_up(25)
+    subject.touch_in(entry_station)
+    expect(subject.entry_station).to eq(entry_station)
+  end
+
   it "returns an instance of Oystercard class" do
     expect(subject).to be_instance_of(Oystercard)
   end
@@ -38,18 +48,19 @@ describe Oystercard do
 
   describe "#touch_in" do
     it "can be called on an Oystercard instance" do
-      expect(subject).to respond_to(:touch_in)
+      expect(subject).to respond_to(:touch_in).with(1).argument
     end
 
     it "changes the in_journey instance variable to true" do
       subject.top_up(25)
-      subject.touch_in
+      subject.touch_in(entry_station)
       expect(subject.in_journey?).to eq(true)
     end
 
     it "raises an Exception if balance is below £1" do
-      expect { subject.touch_in }.to raise_error(Exception, "Sorry, insufficient funds.")
+      expect { subject.touch_in(entry_station) }.to raise_error(Exception, "Sorry, insufficient funds.")
     end
+
   end
 
   describe "#touch_out" do
@@ -59,19 +70,26 @@ describe Oystercard do
 
     it "changes the in_journey instance variable to false" do
       subject.top_up(25)
-      subject.touch_in
+      subject.touch_in(entry_station)
       subject.touch_out
       expect(subject.in_journey?).to eq(false)
     end
 
     it "charges the Oystercard the minimum fare" do
       subject.top_up(25)
-      subject.touch_in
+      subject.touch_in(entry_station)
       expect { subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MINIMUM_FARE)
     end
 
     it "raises an Exception if user hasn't touched in and tries to touch out" do
       expect { subject.touch_out }.to raise_error(Exception, "You need to touch in first!")
+    end
+
+    it "sets @entry_station to nil" do
+      subject.top_up(25)
+      subject.touch_in(entry_station)
+      subject.touch_out
+      expect(subject.entry_station).to eq(nil)
     end
   end
 end
