@@ -1,6 +1,6 @@
 class Oystercard
 
-  attr_reader :balance, :entry_station
+  attr_reader :balance, :entry_station, :exit_station, :trip_history
 
   DEFAULT_BALANCE = 0
   MAX_BALANCE = 90
@@ -9,6 +9,8 @@ class Oystercard
   def initialize(balance = DEFAULT_BALANCE)
     @balance = balance
     @entry_station = nil
+    @exit_station = nil
+    @trip_history = []
   end
 
   def top_up(value)
@@ -26,8 +28,10 @@ class Oystercard
     @entry_station = entry_station
   end
 
-  def touch_out
+  def touch_out(exit_station)
     raise Exception.new "You need to touch in first!" if !@entry_station
+    @exit_station = exit_station
+    trip_history << { entry_station: @entry_station, exit_station: @exit_station }
     @entry_station = nil
     deduct
   end
