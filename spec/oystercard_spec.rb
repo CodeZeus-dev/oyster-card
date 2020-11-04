@@ -19,6 +19,14 @@ describe Oystercard do
     it 'stores the trip history as an instance variable' do
       expect(subject.trip_history).to be_empty
     end
+
+    it 'stores the entry station to an instance variable upon initialisation' do
+      expect(subject.entry_station).to eq nil
+    end
+
+    it 'stores the exit station to an instance variable upon initialisation' do
+      expect(subject.exit_station).to eq nil
+    end
   end
 
   describe "#top_up" do

@@ -31,9 +31,9 @@ class Oystercard
   def touch_out(exit_station)
     raise Exception.new "You need to touch in first!" if !@entry_station
     @exit_station = exit_station
-    trip_history << { entry_station: @entry_station, exit_station: @exit_station }
+    add_trip(@entry_station, @exit_station)
     @entry_station = nil
-    deduct
+    deduct(MINIMUM_FARE)
   end
 
   private
@@ -46,8 +46,12 @@ class Oystercard
     @balance < MINIMUM_FARE
   end
 
-  def deduct
-    @balance -= MINIMUM_FARE
+  def deduct(value)
+    @balance -= value
+  end
+
+  def add_trip(entry_station, exit_station)
+    @trip_history << { entry_station: entry_station, exit_station: exit_station }
   end
 
 end
