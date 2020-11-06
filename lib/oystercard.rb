@@ -1,6 +1,8 @@
+require_relative 'journey'
+
 class Oystercard
 
-  attr_reader :balance, :entry_station, :exit_station, :trip_history
+  attr_reader :balance, :trip_history, :journey
 
   DEFAULT_BALANCE = 0
   MAX_BALANCE = 90
@@ -8,9 +10,8 @@ class Oystercard
 
   def initialize(balance = DEFAULT_BALANCE)
     @balance = balance
-    @entry_station = nil
-    @exit_station = nil
     @trip_history = []
+    @journey
   end
 
   def top_up(value)
@@ -20,20 +21,21 @@ class Oystercard
   end
 
   def in_journey?
-    !!@entry_station
+    !!@journey
   end
 
-  def touch_in(entry_station)
+  def touch_in(station)
+    no_touch_out?
     raise Exception.new "Sorry, insufficient funds." if insufficient_funds?
-    @entry_station = entry_station
+    @journey = Journey.new(station)
   end
 
-  def touch_out(exit_station)
-    raise Exception.new "You need to touch in first!" if !@entry_station
-    @exit_station = exit_station
-    add_trip(@entry_station, @exit_station)
-    @entry_station = nil
-    deduct(MINIMUM_FARE)
+  def touch_out(station)
+    no_touch_in?(station)
+    @journey.finish(station)
+    deduct(@journey.fare)
+    add_trip
+    @journey = nil
   end
 
   private
@@ -50,8 +52,22 @@ class Oystercard
     @balance -= value
   end
 
-  def add_trip(entry_station, exit_station)
-    @trip_history << { entry_station: entry_station, exit_station: exit_station }
+  def add_trip
+    @trip_history << @journey
+  end
+
+  def no_touch_out?
+    if !!@journey
+      add_trip if !!@journey
+      deduct(@journey.fare)
+    end
+  end
+
+  def no_touch_in?(station)
+    if !@journey
+      @journey = Journey.new(nil, station)
+      add_trip
+    end
   end
 
 end

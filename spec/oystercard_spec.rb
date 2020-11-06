@@ -3,9 +3,7 @@ require 'station'
 
 describe Oystercard do
 
-  let(:entry_station) { double :station }
-  let(:exit_station) {double :station}
-  let(:journey) { { entry_station: entry_station, exit_station: exit_station } }
+  let(:station) { Station.new("Leicester Square", 1) }
 
   it "returns an instance of Oystercard class" do
     expect(subject).to be_instance_of(Oystercard)
@@ -18,14 +16,6 @@ describe Oystercard do
 
     it 'stores the trip history as an instance variable' do
       expect(subject.trip_history).to be_empty
-    end
-
-    it 'stores the entry station to an instance variable upon initialisation' do
-      expect(subject.entry_station).to eq nil
-    end
-
-    it 'stores the exit station to an instance variable upon initialisation' do
-      expect(subject.exit_station).to eq nil
     end
   end
 
@@ -59,20 +49,14 @@ describe Oystercard do
       expect(subject).to respond_to(:touch_in).with(1).argument
     end
 
-    it "changes the in_journey instance variable to true" do
-      subject.top_up(25)
-      subject.touch_in(entry_station)
-      expect(subject.in_journey?).to eq(true)
-    end
-
     it "raises an Exception if balance is below £1" do
-      expect { subject.touch_in(entry_station) }.to raise_error(Exception, "Sorry, insufficient funds.")
+      expect { subject.touch_in(station) }.to raise_error(Exception, "Sorry, insufficient funds.")
     end
 
-    it 'stores the entry station into the entry_station instance variable' do
+    it "returns an instance of the Journey class" do
       subject.top_up(25)
-      subject.touch_in(entry_station)
-      expect(subject.entry_station).to eq(entry_station)
+      subject.touch_in(station)
+      expect(subject.journey).to be_instance_of(Journey)
     end
   end
 
@@ -83,40 +67,22 @@ describe Oystercard do
 
     it "changes the in_journey instance variable to false" do
       subject.top_up(25)
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
+      subject.touch_in(station)
+      subject.touch_out(station)
       expect(subject.in_journey?).to eq(false)
     end
 
     it "charges the Oystercard the minimum fare" do
       subject.top_up(25)
-      subject.touch_in(entry_station)
-      expect { subject.touch_out(exit_station) }.to change{ subject.balance }.by(-Oystercard::MINIMUM_FARE)
-    end
-
-    it "raises an Exception if user hasn't touched in and tries to touch out" do
-      expect { subject.touch_out(exit_station) }.to raise_error(Exception, "You need to touch in first!")
-    end
-
-    it "sets @entry_station to nil" do
-      subject.top_up(25)
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.entry_station).to eq(nil)
-    end
-
-    it 'stores the exit station into the exit_station instance variable' do
-      subject.top_up(25)
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.exit_station).to eq(exit_station)
+      subject.touch_in(station)
+      expect { subject.touch_out(station) }.to change{ subject.balance }.by(-Oystercard::MINIMUM_FARE)
     end
 
     it "stores the journey to the trip_history array" do
       subject.top_up(25)
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.trip_history).to include(journey)
+      subject.touch_in(station)
+      subject.touch_out(station)
+      expect(subject.trip_history).not_to be_empty
     end
   end
 end
